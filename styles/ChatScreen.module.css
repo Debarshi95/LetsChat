@@ -1,0 +1,60 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.topbar {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  background-color: #1a2e35;
+  padding: 0 38px;
+}
+.userInfo > h4 {
+  color: #fafafa;
+}
+.userInfo > hr {
+  background-color: #1a2e35;
+  height: 2px;
+}
+.formItems {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #b8b8b8;
+  border-radius: 28px;
+  position: sticky;
+  bottom: 0;
+  background: #fafafa;
+}
+.formItems > textarea {
+  flex: 1;
+  border: 0;
+  outline: none;
+  font-size: 16px;
+  padding-top: 12px;
+}
+
+.messageWrapper {
+  flex: 1;
+  padding: 0 24px;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+.myMessage {
+  background: #b8b8b8;
+  width: 140px;
+  padding: 10px 14px;
+  height: auto;
+  border-top-right-radius: 30px;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  margin: 10px 0;
+}
+.message > p {
+  word-wrap: break-word;
+}

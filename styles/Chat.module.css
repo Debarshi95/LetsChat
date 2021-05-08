@@ -1,0 +1,27 @@
+.root {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.chatSidebar {
+  min-height: 100%;
+  overflow-y: scroll;
+}
+.chatChatScreen {
+  height: 100%;
+  flex: 1;
+  position: static;
+  top: 0;
+}
+.chatNoScreen {
+  width: calc(100% - 320px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.chatNoScreen > img {
+  width: 70%;
+  height: 70%;
+}

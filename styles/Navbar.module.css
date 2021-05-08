@@ -1,0 +1,17 @@
+.root {
+  display: flex;
+  width: 85%;
+  margin: auto;
+  justify-content: space-between;
+  padding: 1rem;
+}
+.home {
+  font-size: 1.3rem;
+}
+.navLinks {
+  padding: 10px 0;
+}
+.navLinks > a {
+  color: #385a64;
+  font-weight: bold;
+}
