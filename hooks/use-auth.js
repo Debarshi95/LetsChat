@@ -83,10 +83,10 @@ const useAuth = () => {
   const getUserDataById = async (userId) => {
     try {
       const res = await db.collection("users").where("uid", "==", userId).get();
-      console.log("data", res?.docs[0].data());
+      // console.log("data", res?.docs[0].data());
       const mUser = { id: res.docs[0].id, ...res.docs[0].data() };
 
-      console.log("user", mUser);
+      // console.log("user", mUser);
       setUser(mUser);
       return mUser;
     } catch (err) {
