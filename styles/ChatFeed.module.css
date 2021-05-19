@@ -7,11 +7,11 @@
 
 .topbar {
   display: flex;
-  flex-direction: column;
   position: sticky;
   top: 0;
   background-color: #1a2e35;
   padding: 0 38px;
+  align-items: center;
 }
 .userInfo > h4 {
   color: #fafafa;

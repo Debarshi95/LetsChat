@@ -1,0 +1,50 @@
+.root {
+  background-color: #f05159;
+  width: 340px;
+  min-height: 100%;
+  padding: 1rem;
+  color: #f5f5f5;
+}
+
+.userInfo {
+  display: flex;
+  margin: 10px 0 !important;
+}
+
+.root > hr {
+  height: 2px;
+}
+
+.roomHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.roomHeader > h3 {
+  color: inherit;
+  margin-left: 10px;
+}
+
+.roomWrapper {
+  overflow-y: scroll;
+  max-height: 450px;
+}
+
+.room {
+  display: flex;
+  justify-content: flex-start !important;
+}
+.room > span {
+  font-size: 1.5rem;
+}
+
+.signout {
+  position: absolute !important;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 290px !important;
+  margin: 16px !important;
+  border: 3px solid #f2f2f2 !important;
+  border-radius: 24px !important;
+}

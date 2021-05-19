@@ -14,7 +14,7 @@ export default function Navbar() {
 
       {user && (
         <div className={styles.navLinks}>
-          <Link href={`/user/${user?.id}/chats`}>Chats</Link>
+          <Link href={`/user/${user?.uid}/chats`}>Chats</Link>
         </div>
       )}
     </div>

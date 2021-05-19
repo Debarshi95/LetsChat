@@ -38,8 +38,8 @@ export default function Home() {
 
   const handleVerifyOtp = () => {
     verifyOtp(otp.toString())
-      .then((id) => {
-        router.push(`/user/${id}/chats`);
+      .then((user) => {
+        router.push(`/user/${user.uid}/chats`);
       })
       .catch((err) => {
         setVerificationId(null);

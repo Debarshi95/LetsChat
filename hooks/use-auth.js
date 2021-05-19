@@ -7,59 +7,53 @@ const useAuth = () => {
   const confirmationResult = React.useRef();
 
   React.useEffect(() => {
-    const unsub = auth.onAuthStateChanged((authUser) => {
+    const unsub = auth.onAuthStateChanged(async (authUser) => {
       if (authUser) {
-        // setLoggedStatus(true);
-        getUserDataById(authUser.uid);
+        const userExists = await checkIfUserExists(authUser.uid);
+        if (!userExists) {
+          createNewUser(authUser);
+        } else {
+          getUserDataById(authUser.uid);
+        }
       } else {
-        // setLoggedStatus(false);
         setUser(null);
       }
     });
-    return () => unsub();
-  }, []);
+    return unsub;
+  }, [setUser]);
 
-  const signInWithPhone = (phoneNumber, captchaVerifier) => {
+  const signInWithPhone = async (phoneNumber, captchaVerifier) => {
     setLoading(true);
-    return auth
-      .signInWithPhoneNumber(phoneNumber, captchaVerifier)
-      .then((res) => {
-        setLoading(false);
-        confirmationResult.current = res;
-        return res;
-      })
-      .catch((err) => {
-        setLoading(false);
-        throw err;
-      });
+
+    try {
+      const res = await auth.signInWithPhoneNumber(
+        phoneNumber,
+        captchaVerifier
+      );
+      confirmationResult.current = res;
+      setLoading(false);
+      return res;
+    } catch (err) {
+      setLoading(false);
+      throw err;
+    }
   };
 
-  const verifyOtp = (userOtp) => {
+  const verifyOtp = async (userOtp) => {
     setLoading(true);
-    return confirmationResult.current
-      ?.confirm(userOtp)
-      .then(async (res) => {
-        const userExists = await checkIfUserExists(res.user.phoneNumber);
-        if (userExists) {
-          return getUserDataById(res.user.uid);
-        } else {
-          return createUser(res.user);
-        }
-      })
-      .then((data) => {
-        setLoading(false);
-        return data.id;
-      })
-      .catch((err) => {
-        setLoading(false);
-        throw err;
-      });
+    try {
+      const res = await confirmationResult.current.confirm(userOtp);
+      return res.user;
+    } catch (error) {
+      setLoading(false);
+      throw error;
+    }
   };
 
-  const checkIfUserExists = (phoneNumber) => {
+  const checkIfUserExists = (userId) => {
     return db
       .collection("users")
-      .where("phoneNumber", "==", phoneNumber)
+      .where("uid", "==", userId)
       .get()
       .then((res) => res.docs.length > 0)
       .catch((err) => {
@@ -81,15 +75,16 @@ const useAuth = () => {
       });
   };
   const getUserDataById = async (userId) => {
+    setLoading(true);
     try {
       const res = await db.collection("users").where("uid", "==", userId).get();
-      // console.log("data", res?.docs[0].data());
       const mUser = { id: res.docs[0].id, ...res.docs[0].data() };
 
-      // console.log("user", mUser);
       setUser(mUser);
+      setLoading(false);
       return mUser;
     } catch (err) {
+      setLoading(false);
       throw err;
     }
   };
@@ -98,10 +93,9 @@ const useAuth = () => {
     return auth.signOut();
   };
 
-  const createUser = (user) => {
-    return db
-      .collection("users")
-      .add({
+  const createNewUser = async (user) => {
+    try {
+      const res = db.collection("users").add({
         uid: user.uid,
         fullname: "",
         email: "",
@@ -110,10 +104,12 @@ const useAuth = () => {
         photoURL: user.photoURL,
         lastLogin: timeStamp(),
         createdAt: timeStamp(),
-      })
-      .catch((err) => {
-        throw err;
       });
+      setLoading(false);
+      return res;
+    } catch (error) {
+      throw error;
+    }
   };
 
   return {

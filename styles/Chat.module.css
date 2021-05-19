@@ -6,7 +6,6 @@
 
 .chatSidebar {
   min-height: 100%;
-  overflow-y: scroll;
 }
 .chatChatScreen {
   height: 100%;
