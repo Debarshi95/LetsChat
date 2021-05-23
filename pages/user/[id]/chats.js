@@ -1,43 +1,47 @@
 import React from "react";
 import ChatFeed from "../../../components/chatfeed";
 import ChatSidebar from "../../../components/chatsidebar";
+import Modal from "../../../components/modal";
 import RoomInfoBar from "../../../components/roominfobar";
 import { db } from "../../../firebase";
 import styles from "../../../styles/Chat.module.css";
+import { getUserDocById } from "../../../util/get-user-doc";
 
-export default function Chat({ rooms }) {
+export default function Chat({ rooms, userData }) {
   const [roomInfo, setRoomInfo] = React.useState(null);
   const [showChatInfoBar, setShowChatInfoBar] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(false);
 
   return (
     <div className={styles.root}>
       <div className={styles.chatSidebar}>
-        <ChatSidebar setRoomInfo={setRoomInfo} rooms={JSON.parse(rooms)} />
+        <ChatSidebar
+          setRoomInfo={setRoomInfo}
+          rooms={JSON.parse(rooms)}
+          userData={JSON.parse(userData)}
+          setShowModal={setShowModal}
+        />
       </div>
       {roomInfo ? (
-        <div className={styles.chatChatScreen}>
+        <div className={styles.chatFeed}>
           <ChatFeed
             roomInfo={roomInfo}
             setShowChatInfoBar={setShowChatInfoBar}
           />
         </div>
       ) : (
-        <div className={styles.chatNoScreen}>
+        <div className={styles.noChatFeed}>
           <img src="/images/click_chat.jpg" alt="chat feed" />
         </div>
       )}
       {showChatInfoBar && <RoomInfoBar roomInfo={roomInfo} />}
+      {showModal && <Modal setShowModal={setShowModal} />}
     </div>
   );
 }
 export async function getServerSideProps(context) {
-  const result = await db
-    .collection("users")
-    .where("uid", "==", context.query.id)
-    .get();
-
-  const user = { id: result?.docs[0].id, ...result?.docs[0].data() };
-
+  const user = await getUserDocById(context.query.id);
+  console.log(user);
   const res = await db
     .collection("rooms")
     .where("members", "array-contains", user?.phoneNumber)
@@ -49,6 +53,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       rooms: JSON.stringify(rooms),
+      userData: JSON.stringify(user),
     },
   };
 }

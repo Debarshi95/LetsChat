@@ -9,34 +9,40 @@ import {
 import styles from "../styles/ChatFeed.module.css";
 import React from "react";
 import { db, timeStamp } from "../firebase";
-
-import { useAuthContext } from "../providers/auth-provider";
 import { useRouter } from "next/router";
 
 export default function ChatFeed({ roomInfo, setShowChatInfoBar }) {
   const [message, setMessage] = React.useState("");
   const [chatMessages, setChatMessages] = React.useState(null);
-  const { user } = useAuthContext();
-  const router = useRouter();
-  const userRef = db.collection("users").doc(user?.id);
+  const [loading, setLoading] = React.useState(true);
+  const { query } = useRouter();
+  const userRef = db.collection("users").doc(query?.id);
+  const viewRef = React.useRef();
 
-  console.log(roomInfo);
   React.useEffect(() => {
-    if (user) {
-      db.collection("chats")
-        .doc(roomInfo.id)
-        .collection("messages")
-        .orderBy("createdAt", "asc")
-        .onSnapshot((snap) => {
-          snap.docs.map((d) => console.log(d.data()));
-          setChatMessages(
-            snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-          );
-        });
-    }
-  }, [user, roomInfo]);
-  console.log(chatMessages);
-  console.log(chatMessages);
+    const unsub = db
+      .collection("chats")
+      .doc(roomInfo.id)
+      .collection("messages")
+      .orderBy("createdAt", "asc")
+      .onSnapshot(async (snap) => {
+        const messages = [];
+        for (let i = 0; i < snap.docs.length; i++) {
+          const _data = snap.docs[i].data();
+          const _sentBy = await _data.sentBy.get();
+
+          _data.id = snap.docs[i].id;
+          _data.sentBy = { id: _sentBy.id, ..._sentBy.data() };
+
+          messages.push(_data);
+        }
+        setChatMessages(messages);
+        setLoading(false);
+        viewRef.current.scrollIntoView({ behavior: "smooth" });
+      });
+    return unsub;
+  }, [roomInfo, viewRef]);
+
   const sendMessage = async (e) => {
     e.preventDefault();
     db.collection("chats").doc(roomInfo.id).collection("messages").add({
@@ -47,6 +53,7 @@ export default function ChatFeed({ roomInfo, setShowChatInfoBar }) {
     setMessage("");
   };
 
+  console.log(chatMessages);
   return (
     <div className={styles.root}>
       <div className={styles.topbar}>
@@ -58,11 +65,39 @@ export default function ChatFeed({ roomInfo, setShowChatInfoBar }) {
         </div>
       </div>
       <div className={styles.messageWrapper}>
-        {chatMessages?.map((m) => (
-          <div key={m.id} className={styles.myMessage}>
-            <p>{m.message}</p>
-          </div>
-        ))}
+        {loading ? (
+          <h2>Loading</h2>
+        ) : (
+          <>
+            {chatMessages?.map((m) => (
+              <div
+                key={m.id}
+                className={styles.message}
+                style={{
+                  background: `${
+                    m.sentBy.id === query.id ? "pink" : "#f5f5f5"
+                  }`,
+
+                  alignSelf: `${
+                    m.sentBy.id === query.id ? "flex-end" : "inherit"
+                  }`,
+                  borderBottomRightRadius: `${
+                    m.sentBy.id !== query.id ? "30px" : "initial"
+                  }`,
+                  borderBottomLeftRadius: `${
+                    m.sentBy.id === query.id ? "30px" : "initial"
+                  }`,
+                }}
+              >
+                <p>
+                  <strong>{m?.sentBy?.phoneNumber}</strong>
+                </p>
+                <p>{m.message}</p>
+              </div>
+            ))}
+          </>
+        )}
+        <div ref={viewRef}></div>
       </div>
       <div className={styles.formItems}>
         <div className="start-icons">

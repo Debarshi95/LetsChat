@@ -1,3 +1,45 @@
 .root {
   width: 360px;
+  position: relative;
+}
+.roomInfo {
+  position: sticky;
+  top: 0;
+  padding: 1rem;
+}
+.memberWrapper {
+  padding: 1rem;
+}
+.member {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+}
+.member > h6 {
+  margin: 0 10px;
+}
+.addMember {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 6px 1rem;
+}
+.addMember > button {
+  border-radius: 28px !important;
+  margin: 8px 0 !important;
+  padding: 12px !important;
+}
+
+.phoneInput {
+  border: 1.5px solid #ff735c;
+  border-radius: 28px;
+  padding: 0 26px;
+}
+.phoneInput > input {
+  padding: 14px 0;
+  outline: none;
+  border: 0;
+  color: #1a2e35;
+  font-weight: bold;
+  font-size: 1rem;
 }

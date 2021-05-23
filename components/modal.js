@@ -4,15 +4,19 @@ import styles from "../styles/Modal.module.css";
 import { useToasts } from "react-toast-notifications";
 import { useAuthContext } from "../providers/auth-provider";
 import { db, timeStamp } from "../firebase";
+import { useRouter } from "next/router";
 
-function Modal({ setOpenModal }) {
+function Modal({ setShowModal }) {
   const [roomName, setRoomName] = React.useState("");
+  const { query } = useRouter();
+  const { user } = useAuthContext();
+  const userRef = db.collection("users").doc(query.id);
+
   const props = useSpring({
     to: { opacity: 0.7 },
     from: { opacity: 0 },
   });
-  const { user } = useAuthContext();
-  const userRef = db.collection("users").doc(user?.id);
+
   const { addToast } = useToasts();
 
   const checkRoomExists = async () => {
@@ -25,28 +29,32 @@ function Modal({ setOpenModal }) {
     return res.docs.length > 0;
   };
   const createRoom = async () => {
-    if (roomName !== "") {
-      const roomExists = await checkRoomExists();
-      if (roomExists) {
-        addToast("Room already exists!", {
+    try {
+      if (roomName !== "") {
+        const roomExists = await checkRoomExists();
+        if (roomExists) {
+          addToast("Room already exists!", {
+            autoDismiss: true,
+            appearance: "error",
+          });
+        } else {
+          await db.collection("rooms").add({
+            roomName: roomName.toLowerCase(),
+            createdBy: userRef,
+            members: [user?.phoneNumber],
+            createdAt: timeStamp(),
+          });
+          setRoomName("");
+          setShowModal(false);
+        }
+      } else {
+        addToast("Room should have a name!", {
           autoDismiss: true,
           appearance: "error",
         });
-        return;
       }
-      await db.collection("rooms").add({
-        roomName: roomName.toLowerCase(),
-        createdBy: userRef,
-        members: [user?.phoneNumber],
-        createdAt: timeStamp(),
-      });
-      setRoomName("");
-      setOpenModal(false);
-    } else {
-      addToast("Room should have a name!", {
-        autoDismiss: true,
-        appearance: "error",
-      });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -66,7 +74,7 @@ function Modal({ setOpenModal }) {
           <button type="button" onClick={createRoom}>
             Create
           </button>
-          <button type="button" onClick={() => setOpenModal(false)}>
+          <button type="button" onClick={() => setShowModal(false)}>
             Cancel
           </button>
         </div>

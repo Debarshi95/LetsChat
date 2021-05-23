@@ -2,49 +2,59 @@
   background-color: #f05159;
   width: 340px;
   min-height: 100%;
-  padding: 1rem;
   color: #f5f5f5;
+  position: relative;
 }
 
+/* .root::-webkit-scrollbar {
+  width: 10px;
+}
+.root::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+.root::-webkit-scrollbar-thumb {
+  background: red;
+  border-radius: 10px;
+} */
 .userInfo {
   display: flex;
-  margin: 10px 0 !important;
-}
-
-.root > hr {
-  height: 2px;
+  padding-left: 3rem !important;
+  padding-right: 3rem !important;
+  border-bottom: 2px solid black !important;
+  border-radius: 0 !important;
+  position: sticky !important;
+  top: 0;
+  z-index: 999 !important;
+  background-color: #f05159;
 }
 
 .roomHeader {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between !important;
   align-items: center;
 }
 .roomHeader > h3 {
   color: inherit;
+  margin: 0;
   margin-left: 10px;
 }
 
-.roomWrapper {
-  overflow-y: scroll;
-  max-height: 450px;
-}
-
 .room {
-  display: flex;
   justify-content: flex-start !important;
-}
-.room > span {
-  font-size: 1.5rem;
+  color: #000 !important;
+  padding-left: 26px !important;
+  padding-right: 26px !important;
+  cursor: pointer !important;
+  background-color: transparent !important;
+  border: none !important;
+  font-family: inherit !important;
 }
 
 .signout {
-  position: absolute !important;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  width: 290px !important;
-  margin: 16px !important;
-  border: 3px solid #f2f2f2 !important;
+  position: sticky !important;
+  bottom: 10px;
   border-radius: 24px !important;
+  z-index: 999;
+  background-color: #f05159 !important;
 }

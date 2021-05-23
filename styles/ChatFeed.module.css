@@ -34,27 +34,27 @@
   border: 0;
   outline: none;
   font-size: 16px;
-  padding-top: 12px;
+  padding-top: 16px;
+  resize: none;
 }
 
 .messageWrapper {
   flex: 1;
   padding: 0 24px;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   flex-direction: column;
   overflow-y: scroll;
 }
-.myMessage {
+.message {
   background: #b8b8b8;
-  width: 140px;
   padding: 10px 14px;
+  max-width: 240px;
   height: auto;
   border-top-right-radius: 30px;
   border-top-left-radius: 30px;
-  border-bottom-left-radius: 30px;
   margin: 10px 0;
 }
-.message > p {
+.message > h6 + p {
   word-wrap: break-word;
 }

@@ -1,43 +1,39 @@
 import {
   Avatar,
   Button,
-  Divider,
   IconButton,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
   Typography,
 } from "@material-ui/core";
-import {
-  Add,
-  AddCircle,
-  AddSharp,
-  ChatBubble,
-  ExitToApp,
-  Person,
-} from "@material-ui/icons";
+import { AddCircle, ExitToApp, Group, Person } from "@material-ui/icons";
 import React from "react";
 import { db } from "../firebase";
 import { useAuthContext } from "../providers/auth-provider";
 import styles from "../styles/ChatSidebar.module.css";
 import { useRouter } from "next/router";
 
-import Modal from "./modal";
-
-export default function ChatSidebar({ rooms: _rooms, setRoomInfo }) {
-  const [showModal, setShowModal] = React.useState(false);
+export default function ChatSidebar({
+  rooms: _rooms,
+  setRoomInfo,
+  userData,
+  setShowModal,
+}) {
   const [rooms, setRooms] = React.useState(_rooms);
   const router = useRouter();
-
-  const { user, signOut } = useAuthContext();
+  const { signOut } = useAuthContext();
 
   React.useEffect(() => {
-    if (user) {
+    if (userData) {
       db.collection("rooms")
-        .where("members", "array-contains", user?.phoneNumber)
+        .where("members", "array-contains", userData?.phoneNumber)
         .orderBy("createdAt", "desc")
         .onSnapshot((snap) => {
           setRooms(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
         });
     }
-  }, [user, setRoomInfo]);
+  }, [userData, setRoomInfo, setShowModal]);
 
   return (
     <div className={styles.root}>
@@ -46,33 +42,34 @@ export default function ChatSidebar({ rooms: _rooms, setRoomInfo }) {
           <Person />
         </Avatar>
         <Typography component="h6" variant="h6">
-          {user?.phoneNumber}
+          {userData?.phoneNumber}
         </Typography>
       </Button>
-
-      <Divider />
-
-      <div className={styles.roomHeader}>
-        <h3>Rooms</h3>
-        <IconButton onClick={() => setShowModal((prev) => !prev)}>
-          <AddCircle />
-        </IconButton>
-      </div>
-      <div className={styles.roomWrapper}>
+      <>
+        <ListItem className={styles.roomHeader} disableGutters>
+          <h3>Rooms</h3>
+          <IconButton onClick={() => setShowModal((prev) => !prev)}>
+            <AddCircle />
+          </IconButton>
+        </ListItem>
         {rooms?.map((room) => (
-          <Button
-            fullWidth
+          <ListItem
+            component="button"
             key={room.id}
             onClick={() => setRoomInfo(room)}
-            startIcon={<ChatBubble />}
             className={styles.room}
           >
-            {room.roomName}
-          </Button>
+            <ListItemIcon>
+              <Group />
+            </ListItemIcon>
+            <ListItemText>{room.roomName}</ListItemText>
+          </ListItem>
         ))}
-      </div>
+      </>
       <Button
+        variant="outlined"
         className={styles.signout}
+        fullWidth
         onClick={() =>
           signOut().then(() => {
             router.push("/");
@@ -82,7 +79,6 @@ export default function ChatSidebar({ rooms: _rooms, setRoomInfo }) {
       >
         Sign Out
       </Button>
-      {showModal && <Modal setOpenModal={setShowModal} />}
     </div>
   );
 }

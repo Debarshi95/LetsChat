@@ -20,5 +20,6 @@ const db = app.firestore();
 const auth = app.auth();
 
 const timeStamp = firebase.firestore.FieldValue.serverTimestamp;
+const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
 
-export { app, auth, timeStamp, db, firebase };
+export { app, auth, timeStamp, db, firebase, arrayUnion };

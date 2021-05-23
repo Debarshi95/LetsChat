@@ -13,10 +13,10 @@ const theme = createMuiTheme({
 
     MuiButtonBase: {
       root: {
-        color: "#f5f5f5 !important",
-        fontFamily: "inherit !important",
+        color: "#f5f5f5",
+        fontFamily: "inherit",
         textTransform: "initial !important",
-        fontSize: "15px !important",
+        fontSize: "15px",
       },
     },
     MuiSvgIcon: {
